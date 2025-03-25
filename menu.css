@@ -92,7 +92,6 @@ footer {
     font-weight: bold;
     text-align: center;
     flex-grow: 1;
-    text-align: center;
 }
 
 header {
@@ -192,4 +191,52 @@ h3 {
 .dish h4 {
     font-size: 1.5em;
     color: #fff;
+}
+
+/* Стиль для мобільних пристроїв */
+@media (max-width: 768px) {
+    .fixed-header {
+        font-size: 1em;  /* Зменшуємо розмір шрифта */
+        padding: 10px 15px;  /* Зменшуємо відступи */
+    }
+
+    .welcome-text {
+        font-size: 1.2em;  /* Зменшуємо розмір шрифта */
+    }
+
+    .cafe-photo {
+        max-height: 250px;  /* Зменшуємо висоту фото */
+    }
+
+    .tabs {
+        flex-direction: column; /* Вкладки будуть вертикальними */
+    }
+
+    .tab-button {
+        font-size: 1em; /* Зменшуємо шрифт на мобільних */
+        padding: 10px;
+    }
+
+    header {
+        padding: 10px;
+    }
+}
+
+/* Стиль для маленьких екранів (менше ніж 480px) */
+@media (max-width: 480px) {
+    .fixed-header {
+        font-size: 0.9em;  /* Зменшуємо шрифт ще більше для дуже маленьких екранів */
+    }
+
+    .welcome-text {
+        font-size: 1.1em;
+    }
+
+    .cafe-photo {
+        max-height: 200px;  /* Ще менше фото */
+    }
+
+    .back-to-top {
+        font-size: 0.8em;  /* Зменшуємо кнопку "Наверх" */
+    }
 }
