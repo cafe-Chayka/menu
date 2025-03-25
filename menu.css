@@ -9,7 +9,9 @@ body {
     text-align: center;
     padding-top: 60px;
 }
-
+#kitchen, #bar {
+    padding-bottom: 60px;
+}
 .fixed-header {
     position: fixed;
     top: 0;
