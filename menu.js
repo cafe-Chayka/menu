@@ -35,15 +35,15 @@ function scrollToTop() {
     });
 }
 
-function loadMenu(containerId, categories, tabName) { // Додаємо tabName
+function loadMenu(containerId, categories, tabName) {
     const container = document.getElementById(containerId);
     container.innerHTML = '';
 
-    const sortedCategories = categories.sort((a, b) => a.sort - b.sort);
-    sortedCategories.forEach(category => {
-        const categoryId = `${tabName}-${category.name.replace(/\s+/g, '-').toLowerCase()}`; // Робимо ID унікальним
+    categories.forEach((category, index) => {
+        const categoryId = `${tabName}-category-${index}`; // Формуємо унікальний id на основі індексу
+
         const categoryDiv = document.createElement('div');
-        categoryDiv.id = categoryId;
+        categoryDiv.id = categoryId; // Присвоюємо унікальний id
         categoryDiv.innerHTML = `<h3>${category.name}</h3>`;
 
         category.dishes.forEach(dish => {
@@ -51,8 +51,6 @@ function loadMenu(containerId, categories, tabName) { // Додаємо tabName
                 <div class="dish">
                     <h4 style="color: #FFD700; font-weight: bold;">${dish.name}</h4>
                     ${dish.description ? `<p>${dish.description}</p>` : ''}   
-                    ${dish.nameoutput && dish.output ? `<p><strong>${dish.nameoutput}:</strong> ${dish.output}</p>` : ''}
-                    ${!dish.nameoutput && dish.output ? `<p>${dish.output}</p>` : ''}
                     <p style="color: #FFD700;"><strong>Ціна:</strong> <span>${dish.price}</span></p>
                 </div>
             `;
@@ -65,11 +63,12 @@ function updateDropdown(categories, tabName) {
     const dropdownMenu = document.getElementById('categoryList');
     dropdownMenu.innerHTML = '';
 
-    categories.forEach(category => {
+    categories.forEach((category, index) => {
+        const categoryId = `${tabName}-category-${index}`; // Формуємо id на основі індексу
+
         const listItem = document.createElement('li');
         listItem.innerText = category.name;
         listItem.onclick = () => {
-            const categoryId = `${tabName}-${category.name.replace(/\s+/g, '-').toLowerCase()}`; // Оновили ID
             const categoryTitle = document.querySelector(`#${categoryId} h3`);
 
             if (categoryTitle) {
