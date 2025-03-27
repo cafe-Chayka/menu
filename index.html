@@ -3,43 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Меню кафе "Чайка"</title>
-    <link rel="stylesheet" href="menu.css">
-    <script src="menu.js" defer></script>
+    <title>Меню</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #3e2723, #795548);
+            color: #fff;
+            text-align: center;
+            padding-top: 60px;
+            overflow: hidden;
+        }
+
+        .menu-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4 колонки */
+            gap: 20px;
+            max-width: 90%;
+            margin: 0 auto;
+            padding: 10px;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+
+        .category {
+            grid-column: span 4;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .category h3 {
+            font-size: 1.5em;
+            margin: 0;
+        }
+
+        .category-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4 колонки для страв */
+            gap: 10px;
+        }
+
+        .dish {
+            margin: 10px 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .dish h4 {
+            color: #FFD700;
+            font-weight: bold;
+            font-size: 1.2em; /* Заголовок страви */
+        }
+
+        .dish p {
+            margin: 5px 0;
+        }
+
+        .description {
+            font-size: 0.9em; /* Опис страви менший */
+            color: #ddd;
+        }
+
+        .price {
+            color: #FFD700;
+            font-weight: bold;
+            font-size: 1.1em; /* Ціна страви */
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            color: #fff;
+            text-align: center;
+        }
+
+        /* Адаптація для мобільних екранів */
+        @media (max-width: 768px) {
+            .category h3 {
+                font-size: 1.2em;
+            }
+
+            .dish h4 {
+                font-size: 1.1em;
+            }
+
+            .price {
+                font-size: 1.1em;
+            }
+
+            .menu-container {
+                grid-template-columns: repeat(2, 1fr); /* 2 колонки на малих екранах */
+            }
+
+            .category-container {
+                grid-template-columns: repeat(2, 1fr); /* 2 колонки для страв */
+            }
+        }
+
+    </style>
 </head>
 <body>
-    <div class="fixed-header">
-    <div class="dropdown">
-        <button class="dropdown-btn">
-            <span class="hamburger"></span>
-            <span class="hamburger"></span>
-            <span class="hamburger"></span>
-        </button>
-        <ul class="dropdown-menu" id="categoryList"></ul> <!-- Ось тут ми розміщуємо випадаючий список -->
-    </div>
-    <span class="welcome-text">Ласкаво просимо до кафе "Чайка"</span>
-    <button class="back-to-top" onclick="scrollToTop()">Наверх</button>
-</div>
 
-<header>
-    <img src="Чайка.jpg" alt="Фото кафе" class="cafe-photo">
-</header>
+    <div id="menu-container" class="menu-container"></div>
 
-<div class="tabs">
-    <button class="tab-button active" onclick="showTab('kitchen', this)">Кухня</button>
-    <button class="tab-button" onclick="showTab('bar', this)">Бар</button>
-</div>
+    <footer>
+        <p>© 2025 Меню кафе</p>
+    </footer>
 
-<div id="kitchen" class="tab-content">
-    <div id="kitchen-categories"></div>
-</div>
+    <script>
+        // Завантажуємо меню JSON та відображаємо його на екрані
+        fetch('menu.json')
+            .then(response => response.json())
+            .then(menuData => {
+                const container = document.getElementById('menu-container');
 
-<div id="bar" class="tab-content">
-    <div id="bar-categories"></div>
-</div>
+                // Обробляємо категорії кухні та бару
+                loadCategory(menuData.kitchen.categories, 'Кухня', container);
+                loadCategory(menuData.bar.categories, 'Бар', container);
 
-<footer>
-    <p>Завжди раді вас бачити в нашому кафе!</p>
-</footer>
+                adjustFontSize();  // Адаптуємо шрифт під висоту екрану
+            })
+            .catch(error => {
+                console.error('Error loading menu data:', error);
+            });
+
+        // Функція для відображення категорій та страв
+        function loadCategory(categories, categoryName, container) {
+            const categoryDiv = document.createElement('div');
+            categoryDiv.classList.add('category');
+            categoryDiv.innerHTML = `<h3>${categoryName}</h3>`;
+
+            categories.forEach(category => {
+                const categoryContainer = document.createElement('div');
+                categoryContainer.classList.add('category-container');
+
+                category.dishes.forEach(dish => {
+                    categoryContainer.innerHTML += `
+                        <div class="dish">
+                            <h4>${dish.name}</h4>
+                            ${dish.description ? `<p class="description">${dish.description}</p>` : ''}
+                            <p class="price"><strong>Ціна:</strong> ${dish.price}</p>
+                        </div>
+                    `;
+                });
+
+                categoryDiv.appendChild(categoryContainer);
+            });
+
+            container.appendChild(categoryDiv);
+        }
+
+        // Функція для адаптації шрифта залежно від висоти екрану
+        function adjustFontSize() {
+            const bodyHeight = document.body.clientHeight;
+            const menuContainer = document.getElementById('menu-container');
+            const menuHeight = menuContainer.scrollHeight;
+
+            if (menuHeight > bodyHeight) {
+                const scaleFactor = bodyHeight / menuHeight;
+                const categoryHeaders = document.querySelectorAll('.category h3');
+                const dishHeaders = document.querySelectorAll('.dish h4');
+                const priceElements = document.querySelectorAll('.price');
+                const descriptions = document.querySelectorAll('.description');
+
+                // Масштабуємо шрифт для заголовків категорій, страв, опису та цін
+                categoryHeaders.forEach(header => header.style.fontSize = `${scaleFactor * 1.5}em`);
+                dishHeaders.forEach(header => header.style.fontSize = `${scaleFactor * 1.2}em`);
+                priceElements.forEach(price => price.style.fontSize = `${scaleFactor * 1.1}em`);
+                descriptions.forEach(description => description.style.fontSize = `${scaleFactor * 0.9}em`);
+            }
+        }
+    </script>
+
 </body>
 </html>
