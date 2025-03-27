@@ -12,64 +12,65 @@
             background: linear-gradient(to bottom, #3e2723, #795548);
             color: #fff;
             text-align: center;
-            padding-top: 60px;
+            padding-top: 20px; /* Зменшено верхній відступ */
             overflow: hidden;
         }
 
         .menu-container {
             display: grid;
-            grid-template-columns: repeat(4, 1fr); /* 4 колонки */
-            gap: 20px;
+            grid-template-columns: repeat(8, 1fr); /* 8 колонок для більшого заповнення екрану */
+            gap: 5px; /* Зменшено проміжок між елементами */
             max-width: 90%;
             margin: 0 auto;
-            padding: 10px;
+            padding: 5px;
             overflow-y: auto;
             max-height: 80vh;
         }
 
         .category {
-            grid-column: span 4;
-            margin-bottom: 30px;
+            grid-column: span 8;
+            margin-bottom: 10px;
             text-align: left;
         }
 
         .category h3 {
-            font-size: 1.5em;
+            font-size: 1.2em; /* Зменшено шрифт для заголовків категорій */
             margin: 0;
+            padding-bottom: 5px;
         }
 
         .category-container {
             display: grid;
-            grid-template-columns: repeat(4, 1fr); /* 4 колонки для страв */
-            gap: 10px;
+            grid-template-columns: repeat(8, 1fr); /* 8 страв на один рядок */
+            gap: 5px;
         }
 
         .dish {
-            margin: 10px 0;
+            margin: 0;
+            padding: 10px;
             background-color: rgba(0, 0, 0, 0.5);
-            padding: 15px;
             border-radius: 8px;
         }
 
         .dish h4 {
             color: #FFD700;
             font-weight: bold;
-            font-size: 1.2em; /* Заголовок страви */
+            font-size: 1em; /* Зменшено шрифт для страв */
         }
 
         .dish p {
-            margin: 5px 0;
+            margin: 3px 0;
         }
 
         .description {
-            font-size: 0.9em; /* Опис страви менший */
+            font-size: 0.8em; /* Зменшено шрифт опису страви */
             color: #ddd;
         }
 
         .price {
             color: #FFD700;
             font-weight: bold;
-            font-size: 1.1em; /* Ціна страви */
+            font-size: 1em; /* Зменшено шрифт ціни */
         }
 
         footer {
@@ -86,23 +87,23 @@
         /* Адаптація для мобільних екранів */
         @media (max-width: 768px) {
             .category h3 {
-                font-size: 1.2em;
+                font-size: 1em;
             }
 
             .dish h4 {
-                font-size: 1.1em;
+                font-size: 0.9em;
             }
 
             .price {
-                font-size: 1.1em;
+                font-size: 0.9em;
             }
 
             .menu-container {
-                grid-template-columns: repeat(2, 1fr); /* 2 колонки на малих екранах */
+                grid-template-columns: repeat(4, 1fr); /* 4 колонки для мобільних екранів */
             }
 
             .category-container {
-                grid-template-columns: repeat(2, 1fr); /* 2 колонки для страв */
+                grid-template-columns: repeat(4, 1fr); /* 4 страви на один рядок для мобільних */
             }
         }
 
@@ -173,10 +174,10 @@
                 const descriptions = document.querySelectorAll('.description');
 
                 // Масштабуємо шрифт для заголовків категорій, страв, опису та цін
-                categoryHeaders.forEach(header => header.style.fontSize = `${scaleFactor * 1.5}em`);
-                dishHeaders.forEach(header => header.style.fontSize = `${scaleFactor * 1.2}em`);
-                priceElements.forEach(price => price.style.fontSize = `${scaleFactor * 1.1}em`);
-                descriptions.forEach(description => description.style.fontSize = `${scaleFactor * 0.9}em`);
+                categoryHeaders.forEach(header => header.style.fontSize = `${scaleFactor * 1.2}em`);
+                dishHeaders.forEach(header => header.style.fontSize = `${scaleFactor * 1.0}em`);
+                priceElements.forEach(price => price.style.fontSize = `${scaleFactor * 1.0}em`);
+                descriptions.forEach(description => description.style.fontSize = `${scaleFactor * 0.8}em`);
             }
         }
     </script>
