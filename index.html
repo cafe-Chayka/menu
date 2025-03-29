@@ -3,172 +3,211 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Меню</title>
+    <title>Меню кафе "Чайка"</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;500&display=swap');
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f8f8f8;
+            background: linear-gradient(to bottom, #3498db, #f1c40f); /* блакитний зверху, жовтий знизу */
+            color: #fff;
             text-align: center;
-            overflow-x: auto;
+            padding-top: 60px;
         }
 
-        .menu-container {
-            padding: 10px;
-            box-sizing: border-box;
-            overflow-x: auto;
-            max-width: 100vw;
-        }
-
-        .category-row {
+        .fixed-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #ffeb3b;
+            font-size: 1.2em;
+            padding: 10px 20px;
+            z-index: 1000;
             display: flex;
-            flex-wrap: nowrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tabs {
+            position: sticky;
+            top: 60px; /* висота закріпленого хедера */
+            background-color: transparent; /* фон прозорий */
+            z-index: 999; /* перекриває інший контент */
+            padding: 10px 0;
+            display: flex;
             justify-content: center;
-            margin-bottom: 20px;
-            overflow-x: auto;
+            margin-top: 20px;
+            flex-wrap: wrap;
         }
 
-        .category {
-            display: inline-block;
-            margin-right: 10px;
-            white-space: normal;
-            border-radius: 8px;
-            background: #ffffff;
-            padding: 5px;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-            width: 250px;
-            margin-bottom: 10px;
-        }
-
-        .category-title {
-            font-size: 12px;
+        .tab-button {
+            background-color: #333;
+            color: #fff;
+            padding: 12px 24px;
+            border: none;
+            cursor: pointer;
+            font-size: 1.3em;
             font-weight: bold;
-            color: #222;
-            text-align: center;
-            margin-bottom: 3px;
-            padding: 3px;
-            background: #ddd;
-            border-radius: 4px;
+            margin: 5px;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        .tab-button:hover, .tab-button.active {
+            background-color: #555;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+        }
+
+        .tab-content.active {
+            display: block;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 10px;
+            margin-top: 20px;
         }
 
         th, td {
-            padding: 3px;
+            padding: 10px;
             text-align: left;
         }
 
         th {
-            background-color: #e0e0e0;
-            font-size: 10px;
-            padding: 4px;
+            background-color: #333;
+            color: #f1c40f; /* жовтий колір заголовків */
+        }
+
+        td {
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
         .dish-name {
             font-weight: bold;
-            font-size: 10px;
+            font-size: 1.2em;
+            color: #8B0000; /* темно бордовий для назв страв */
         }
 
         .dish-description {
-            font-size: 8px;
-            color: #666;
+            font-size: 0.9em;
+            color: #fff; /* білий колір для опису */
         }
 
-        h2 {
-            font-size: 18px;
-            font-weight: bold;
-            margin: 20px 0;
+        .dish-price {
+            color: #8B0000; /* темно бордовий для ціни */
+            font-weight: 700; /* жирний шрифт */
+            font-size: 1.2em; /* збільшений розмір шрифту для кращої видимості */
         }
     </style>
 </head>
 <body>
+    <div class="fixed-header">Ласкаво просимо до кафе "Чайка"</div>
 
-<div class="menu-container" id="menu-container">
-    <!-- Заголовок для Кухні та Бару -->
-    <h2>Меню: Кухня</h2>
-    <!-- Перші 8 категорій Кухні -->
-    <div class="category-row" id="kitchen-row">
-        <!-- Категорії кухні будуть завантажені сюди -->
+    <div class="tabs">
+        <button class="tab-button active" onclick="showTab('kitchen', this)">Кухня</button>
+        <button class="tab-button" onclick="showTab('bar', this)">Бар</button>
     </div>
 
-    <h2>Меню: Бар</h2>
-    <!-- Перші 8 категорій Бару -->
-    <div class="category-row" id="bar-row">
-        <!-- Категорії бару будуть завантажені сюди -->
+    <div id="kitchen" class="tab-content active">
+        <h2>Кухня</h2>
+        <div id="kitchen-categories"></div>
     </div>
-</div>
 
-<script>
-    fetch('menu.json')
-        .then(response => response.json())
-        .then(menuData => {
-            loadCategories(menuData);
-        })
-        .catch(error => console.error('Error loading menu data:', error));
+    <div id="bar" class="tab-content">
+        <h2>Бар</h2>
+        <div id="bar-categories"></div>
+    </div>
 
-    function loadCategories(menuData) {
-        const kitchenRow = document.getElementById('kitchen-row');
-        const barRow = document.getElementById('bar-row');
+    <script>
+        function showTab(tabName, btn) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+                tab.querySelector("div").innerHTML = "";
+            });
+            document.getElementById(tabName).classList.add('active');
+            document.querySelectorAll('.tab-button').forEach(button => button.classList.remove('active'));
+            btn.classList.add('active');
 
-        const kitchenCategories = menuData.kitchen.categories; // Категорії кухні
-        const barCategories = menuData.bar.categories; // Категорії бару
+            fetch('menu.json')
+                .then(response => response.json())
+                .then(menuData => {
+                    if (tabName === 'kitchen') {
+                        loadCategories('kitchen-categories', menuData.kitchen.categories);
+                    } else if (tabName === 'bar') {
+                        loadCategories('bar-categories', menuData.bar.categories);
+                    }
+                })
+                .catch(error => console.error('Помилка завантаження меню:', error));
+        }
 
-        // Завантажуємо категорії кухні
-        kitchenCategories.forEach(category => {
-            createCategory(category, kitchenRow);
-        });
+        function loadCategories(containerId, categories) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
 
-        // Завантажуємо категорії бару
-        barCategories.forEach(category => {
-            createCategory(category, barRow);
-        });
-    }
+            categories.forEach(category => {
+                const categoryButton = document.createElement('button');
+                categoryButton.textContent = category.name;
+                categoryButton.classList.add('tab-button');
+                categoryButton.onclick = () => showDishes(containerId, category.dishes, category.name);
+                container.appendChild(categoryButton);
+            });
+        }
 
-    function createCategory(category, row) {
-        if (category) {
-            const categoryDiv = document.createElement('div');
-            categoryDiv.classList.add('category');
+        function showDishes(containerId, dishes, categoryName) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `<h3>${categoryName}</h3>`;
 
-            const categoryTitle = document.createElement('div');
-            categoryTitle.classList.add('category-title');
-            categoryTitle.innerText = category.name;
-            categoryDiv.appendChild(categoryTitle);
+            if (dishes.length === 0) return;
+
+            let showOutput = false;
+            let outputHeader = "Вихід";
+
+            if (dishes[0].output) {
+                showOutput = true;
+                outputHeader = dishes[0].nameoutput || "Вихід";
+            }
 
             const table = document.createElement('table');
+            const header = document.createElement('tr');
+            header.innerHTML = `<th>Назва</th>` +
+                               (showOutput ? `<th>${outputHeader}</th>` : '') +
+                               `<th>Ціна</th>`;
+            table.appendChild(header);
 
-            const thead = document.createElement('thead');
-            thead.innerHTML = `<tr>
-                <th>Назва та опис</th>
-                <th>Вихід</th>
-                <th>Ціна</th>
-            </tr>`;
-            table.appendChild(thead);
-
-            const tbody = document.createElement('tbody');
-            category.dishes.forEach(dish => {
+            dishes.forEach(dish => {
                 const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>
-                        <div class="dish-name">${dish.name}</div>
-                        ${dish.description ? `<div class="dish-description">${dish.description}</div>` : ''}
-                    </td>
-                    <td>${dish.output || ''}</td>
-                    <td>${dish.price}</td>
-                `;
-                tbody.appendChild(row);
+                const nameCell = document.createElement('td');
+                nameCell.innerHTML = `<span class="dish-name">${dish.name}</span>`;
+                if (dish.description) {
+                    nameCell.innerHTML += `<br><span class="dish-description">${dish.description}</span>`;
+                }
+                row.appendChild(nameCell);
+
+                if (showOutput) {
+                    const outputCell = document.createElement('td');
+                    outputCell.textContent = dish.output || '-';
+                    row.appendChild(outputCell);
+                }
+
+                const priceCell = document.createElement('td');
+                priceCell.textContent = dish.price || '-';
+                priceCell.classList.add('dish-price');
+                row.appendChild(priceCell);
+                table.appendChild(row);
             });
-            table.appendChild(tbody);
 
-            categoryDiv.appendChild(table);
-            row.appendChild(categoryDiv);
+            container.appendChild(table);
         }
-    }
-</script>
 
+        showTab('kitchen', document.querySelector('.tab-button.active'));
+    </script>
 </body>
 </html>

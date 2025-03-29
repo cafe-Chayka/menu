@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Меню</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f8f8;
+            text-align: center;
+        }
+        .menu-container {
+            display: flex;
+            flex-direction: row; /* Горизонтальний напрямок для колонок */
+            gap: 20px;
+            justify-content: flex-start;
+            flex-wrap: wrap; /* Дозволяє колонкам переноситись */
+        }
+        .category {
+            background: #ffffff;
+            padding: 5px;
+            border-radius: 8px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            width: 220px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+        .category-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #222;
+            text-align: center;
+            margin-bottom: 5px;
+            padding: 5px;
+            background: #ddd;
+            border-radius: 4px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px;
+        }
+        th, td {
+            padding: 3px;
+            text-align: left;
+        }
+        th {
+            background-color: #e0e0e0;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 20px 0;
+            width: 100%;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="menu-container" id="menu-container"></div>
+
+<script>
+    const maxHeight = 35; // максимальна висота колонки
+
+    fetch('menu.json')
+        .then(response => response.json())
+        .then(menuData => loadMenu(menuData))
+        .catch(error => console.error('Error loading menu data:', error));
+
+    function calculateDishHeight(dish) {
+        let height = 1; // 1 рядок для назви страви
+        if (dish.description) {
+            // Підрахунок кількості рядків, які займає опис страви
+            let descriptionLines = Math.ceil(dish.description.length / 50); // 50 символів на рядок
+            height += descriptionLines; // додаємо кількість рядків опису
+        }
+        return height;
+    }
+
+    function loadMenu(menuData) {
+        const container = document.getElementById('menu-container');
+        renderSection('Кухня', menuData.kitchen.categories, container);
+    }
+
+    function renderSection(title, categories, container) {
+        categories.sort((a, b) => a.sort - b.sort);
+
+        container.innerHTML += `<div class='section-title'>${title}</div>`;
+
+        let currentColumn = document.createElement('div');
+        currentColumn.classList.add('menu-container');
+        container.appendChild(currentColumn);
+
+        let currentHeight = 0; // Початкове значення висоти поточної колонки
+
+        categories.forEach(category => {
+            const categoryTitle = createCategoryTitleElement(category);
+            currentColumn.appendChild(categoryTitle);
+
+            category.dishes.forEach(dish => {
+                const dishHeight = calculateDishHeight(dish);
+
+                // Якщо поточна висота колонки перевищує максимальну, створюємо нову колонку
+                if (currentHeight + dishHeight > maxHeight) {
+                    currentColumn = document.createElement('div');
+                    currentColumn.classList.add('menu-container');
+                    container.appendChild(currentColumn);
+                    currentHeight = 0; // Оновлюємо висоту колонки
+                }
+
+                const dishElement = createDishElement(dish);
+                currentColumn.appendChild(dishElement);
+                currentHeight += dishHeight; // Додаємо висоту страви
+            });
+        });
+    }
+
+    function createCategoryTitleElement(category) {
+        const categoryTitleDiv = document.createElement('div');
+        categoryTitleDiv.classList.add('category-title');
+        categoryTitleDiv.innerText = category.name;
+        return categoryTitleDiv;
+    }
+
+    function createDishElement(dish) {
+        const dishDiv = document.createElement('div');
+        dishDiv.classList.add('category');
+
+        const dishTitle = document.createElement('div');
+        dishTitle.innerHTML = `<strong>${dish.name}</strong>`;
+        dishDiv.appendChild(dishTitle);
+
+        if (dish.description) {
+            const descriptionDiv = document.createElement('div');
+            descriptionDiv.style.fontSize = '10px';
+            descriptionDiv.style.color = '#666';
+            descriptionDiv.innerText = dish.description;
+            dishDiv.appendChild(descriptionDiv);
+        }
+
+        return dishDiv;
+    }
+</script>
+
+</body>
+</html>
