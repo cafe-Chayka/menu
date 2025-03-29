@@ -10,22 +10,23 @@
             margin: 0;
             padding: 0;
             background-color: #f8f8f8;
+            text-align: center;
             overflow-x: auto;
-            white-space: nowrap;
         }
 
         .menu-container {
             padding: 10px;
             box-sizing: border-box;
-            overflow-x: auto; /* Додаємо горизонтальну прокрутку */
+            overflow-x: auto;
             max-width: 100vw;
         }
 
         .category-row {
             display: flex;
             flex-wrap: nowrap;
+            justify-content: center;
             margin-bottom: 20px;
-            overflow-x: auto; /* Додаємо горизонтальну прокрутку для кожного ряду */
+            overflow-x: auto;
         }
 
         .category {
@@ -36,8 +37,8 @@
             background: #ffffff;
             padding: 5px;
             box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-            width: 250px; /* Задаємо фіксовану ширину для категорій */
-            margin-bottom: 10px; /* Відстань між категоріями */
+            width: 250px;
+            margin-bottom: 10px;
         }
 
         .category-title {
@@ -77,19 +78,28 @@
             font-size: 8px;
             color: #666;
         }
+
+        h2 {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
     </style>
 </head>
 <body>
 
 <div class="menu-container" id="menu-container">
-    <!-- Перші 8 категорій -->
-    <div class="category-row" id="row-1">
-        <!-- Категорії будуть завантажені сюди -->
+    <!-- Заголовок для Кухні та Бару -->
+    <h2>Меню: Кухня</h2>
+    <!-- Перші 8 категорій Кухні -->
+    <div class="category-row" id="kitchen-row">
+        <!-- Категорії кухні будуть завантажені сюди -->
     </div>
 
-    <!-- Другі 8 категорій -->
-    <div class="category-row" id="row-2">
-        <!-- Категорії будуть завантажені сюди -->
+    <h2>Меню: Бар</h2>
+    <!-- Перші 8 категорій Бару -->
+    <div class="category-row" id="bar-row">
+        <!-- Категорії бару будуть завантажені сюди -->
     </div>
 </div>
 
@@ -102,19 +112,20 @@
         .catch(error => console.error('Error loading menu data:', error));
 
     function loadCategories(menuData) {
-        const row1 = document.getElementById('row-1');
-        const row2 = document.getElementById('row-2');
+        const kitchenRow = document.getElementById('kitchen-row');
+        const barRow = document.getElementById('bar-row');
 
-        const categories = menuData.kitchen.categories; // Всі категорії
+        const kitchenCategories = menuData.kitchen.categories; // Категорії кухні
+        const barCategories = menuData.bar.categories; // Категорії бару
 
-        // Завантажуємо перші 8 категорій
-        categories.slice(0, 8).forEach(category => {
-            createCategory(category, row1);
+        // Завантажуємо категорії кухні
+        kitchenCategories.forEach(category => {
+            createCategory(category, kitchenRow);
         });
 
-        // Завантажуємо наступні 8 категорій
-        categories.slice(8, 16).forEach(category => {
-            createCategory(category, row2);
+        // Завантажуємо категорії бару
+        barCategories.forEach(category => {
+            createCategory(category, barRow);
         });
     }
 
