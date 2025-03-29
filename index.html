@@ -6,181 +6,158 @@
     <title>Меню</title>
     <style>
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(to bottom, #3e2723, #795548);
-            color: #fff;
-            text-align: center;
-            padding-top: 20px; /* Зменшено верхній відступ */
-            overflow: hidden;
+            background-color: #f8f8f8;
+            overflow-x: auto;
+            white-space: nowrap;
         }
 
         .menu-container {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr); /* 8 колонок для більшого заповнення екрану */
-            gap: 5px; /* Зменшено проміжок між елементами */
-            max-width: 90%;
-            margin: 0 auto;
-            padding: 5px;
-            overflow-y: auto;
-            max-height: 80vh;
+            padding: 10px;
+            box-sizing: border-box;
+            overflow-x: auto; /* Додаємо горизонтальну прокрутку */
+            max-width: 100vw;
+        }
+
+        .category-row {
+            display: flex;
+            flex-wrap: nowrap;
+            margin-bottom: 20px;
+            overflow-x: auto; /* Додаємо горизонтальну прокрутку для кожного ряду */
         }
 
         .category {
-            grid-column: span 8;
-            margin-bottom: 10px;
+            display: inline-block;
+            margin-right: 10px;
+            white-space: normal;
+            border-radius: 8px;
+            background: #ffffff;
+            padding: 5px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            width: 250px; /* Задаємо фіксовану ширину для категорій */
+            margin-bottom: 10px; /* Відстань між категоріями */
+        }
+
+        .category-title {
+            font-size: 12px;
+            font-weight: bold;
+            color: #222;
+            text-align: center;
+            margin-bottom: 3px;
+            padding: 3px;
+            background: #ddd;
+            border-radius: 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px;
+        }
+
+        th, td {
+            padding: 3px;
             text-align: left;
         }
 
-        .category h3 {
-            font-size: 1.2em; /* Зменшено шрифт для заголовків категорій */
-            margin: 0;
-            padding-bottom: 5px;
+        th {
+            background-color: #e0e0e0;
+            font-size: 10px;
+            padding: 4px;
         }
 
-        .category-container {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr); /* 8 страв на один рядок */
-            gap: 5px;
-        }
-
-        .dish {
-            margin: 0;
-            padding: 10px;
-            background-color: rgba(0, 0, 0, 0.5);
-            border-radius: 8px;
-        }
-
-        .dish h4 {
-            color: #FFD700;
+        .dish-name {
             font-weight: bold;
-            font-size: 1em; /* Зменшено шрифт для страв */
+            font-size: 10px;
         }
 
-        .dish p {
-            margin: 3px 0;
+        .dish-description {
+            font-size: 8px;
+            color: #666;
         }
-
-        .description {
-            font-size: 0.8em; /* Зменшено шрифт опису страви */
-            color: #ddd;
-        }
-
-        .price {
-            color: #FFD700;
-            font-weight: bold;
-            font-size: 1em; /* Зменшено шрифт ціни */
-        }
-
-        footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 10px;
-            color: #fff;
-            text-align: center;
-        }
-
-        /* Адаптація для мобільних екранів */
-        @media (max-width: 768px) {
-            .category h3 {
-                font-size: 1em;
-            }
-
-            .dish h4 {
-                font-size: 0.9em;
-            }
-
-            .price {
-                font-size: 0.9em;
-            }
-
-            .menu-container {
-                grid-template-columns: repeat(4, 1fr); /* 4 колонки для мобільних екранів */
-            }
-
-            .category-container {
-                grid-template-columns: repeat(4, 1fr); /* 4 страви на один рядок для мобільних */
-            }
-        }
-
     </style>
 </head>
 <body>
 
-    <div id="menu-container" class="menu-container"></div>
+<div class="menu-container" id="menu-container">
+    <!-- Перші 8 категорій -->
+    <div class="category-row" id="row-1">
+        <!-- Категорії будуть завантажені сюди -->
+    </div>
 
-    <footer>
-        <p>© 2025 Меню кафе</p>
-    </footer>
+    <!-- Другі 8 категорій -->
+    <div class="category-row" id="row-2">
+        <!-- Категорії будуть завантажені сюди -->
+    </div>
+</div>
 
-    <script>
-        // Завантажуємо меню JSON та відображаємо його на екрані
-        fetch('menu.json')
-            .then(response => response.json())
-            .then(menuData => {
-                const container = document.getElementById('menu-container');
+<script>
+    fetch('menu.json')
+        .then(response => response.json())
+        .then(menuData => {
+            loadCategories(menuData);
+        })
+        .catch(error => console.error('Error loading menu data:', error));
 
-                // Обробляємо категорії кухні та бару
-                loadCategory(menuData.kitchen.categories, 'Кухня', container);
-                loadCategory(menuData.bar.categories, 'Бар', container);
+    function loadCategories(menuData) {
+        const row1 = document.getElementById('row-1');
+        const row2 = document.getElementById('row-2');
 
-                adjustFontSize();  // Адаптуємо шрифт під висоту екрану
-            })
-            .catch(error => {
-                console.error('Error loading menu data:', error);
-            });
+        const categories = menuData.kitchen.categories; // Всі категорії
 
-        // Функція для відображення категорій та страв
-        function loadCategory(categories, categoryName, container) {
+        // Завантажуємо перші 8 категорій
+        categories.slice(0, 8).forEach(category => {
+            createCategory(category, row1);
+        });
+
+        // Завантажуємо наступні 8 категорій
+        categories.slice(8, 16).forEach(category => {
+            createCategory(category, row2);
+        });
+    }
+
+    function createCategory(category, row) {
+        if (category) {
             const categoryDiv = document.createElement('div');
             categoryDiv.classList.add('category');
-            categoryDiv.innerHTML = `<h3>${categoryName}</h3>`;
 
-            categories.forEach(category => {
-                const categoryContainer = document.createElement('div');
-                categoryContainer.classList.add('category-container');
+            const categoryTitle = document.createElement('div');
+            categoryTitle.classList.add('category-title');
+            categoryTitle.innerText = category.name;
+            categoryDiv.appendChild(categoryTitle);
 
-                category.dishes.forEach(dish => {
-                    categoryContainer.innerHTML += `
-                        <div class="dish">
-                            <h4>${dish.name}</h4>
-                            ${dish.description ? `<p class="description">${dish.description}</p>` : ''}
-                            <p class="price"><strong>Ціна:</strong> ${dish.price}</p>
-                        </div>
-                    `;
-                });
+            const table = document.createElement('table');
 
-                categoryDiv.appendChild(categoryContainer);
+            const thead = document.createElement('thead');
+            thead.innerHTML = `<tr>
+                <th>Назва та опис</th>
+                <th>Вихід</th>
+                <th>Ціна</th>
+            </tr>`;
+            table.appendChild(thead);
+
+            const tbody = document.createElement('tbody');
+            category.dishes.forEach(dish => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <div class="dish-name">${dish.name}</div>
+                        ${dish.description ? `<div class="dish-description">${dish.description}</div>` : ''}
+                    </td>
+                    <td>${dish.output || ''}</td>
+                    <td>${dish.price}</td>
+                `;
+                tbody.appendChild(row);
             });
+            table.appendChild(tbody);
 
-            container.appendChild(categoryDiv);
+            categoryDiv.appendChild(table);
+            row.appendChild(categoryDiv);
         }
-
-        // Функція для адаптації шрифта залежно від висоти екрану
-        function adjustFontSize() {
-            const bodyHeight = document.body.clientHeight;
-            const menuContainer = document.getElementById('menu-container');
-            const menuHeight = menuContainer.scrollHeight;
-
-            if (menuHeight > bodyHeight) {
-                const scaleFactor = bodyHeight / menuHeight;
-                const categoryHeaders = document.querySelectorAll('.category h3');
-                const dishHeaders = document.querySelectorAll('.dish h4');
-                const priceElements = document.querySelectorAll('.price');
-                const descriptions = document.querySelectorAll('.description');
-
-                // Масштабуємо шрифт для заголовків категорій, страв, опису та цін
-                categoryHeaders.forEach(header => header.style.fontSize = `${scaleFactor * 1.2}em`);
-                dishHeaders.forEach(header => header.style.fontSize = `${scaleFactor * 1.0}em`);
-                priceElements.forEach(price => price.style.fontSize = `${scaleFactor * 1.0}em`);
-                descriptions.forEach(description => description.style.fontSize = `${scaleFactor * 0.8}em`);
-            }
-        }
-    </script>
+    }
+</script>
 
 </body>
 </html>
