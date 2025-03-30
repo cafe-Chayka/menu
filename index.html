@@ -21,6 +21,8 @@
             padding: 20px;
             column-width: 350px;
             column-gap: 40px;
+            max-height: 80vh;
+            overflow-y: auto;
         }
 
         .menu-header {
@@ -28,7 +30,7 @@
             font-size: 2em;
             font-weight: bold;
             text-transform: uppercase;
-            break-before: column;
+            margin-top: 20px;
         }
 
         .category {
@@ -76,10 +78,9 @@
 <body>
 
     <div class="menu-container" id="menuContainer">
-        <div class="menu-header">Кухня</div>
-        <div id="kitchen"></div>
-        <div class="menu-header">Бар</div>
-        <div id="bar"></div>
+        <!-- Заголовки будуть тут -->
+        <div id="kitchen" class="menu-category"></div>
+        <div id="bar" class="menu-category"></div>
     </div>
 
     <script>
@@ -87,13 +88,20 @@
             fetch('menu.json')
                 .then(response => response.json())
                 .then(menuData => {
-                    loadCategory(menuData.kitchen, document.getElementById('kitchen'));
-                    loadCategory(menuData.bar, document.getElementById('bar'));
+                    loadCategory(menuData.kitchen, document.getElementById('kitchen'), 'Кухня');
+                    loadCategory(menuData.bar, document.getElementById('bar'), 'Бар');
                 })
                 .catch(error => console.error('Помилка завантаження меню:', error));
         }
 
-        function loadCategory(categoryData, container) {
+        function loadCategory(categoryData, container, headerText) {
+            // Створюємо заголовок для категорії
+            const categoryHeader = document.createElement('div');
+            categoryHeader.classList.add('menu-header');
+            categoryHeader.textContent = headerText;
+            container.appendChild(categoryHeader);
+
+            // Завантажуємо страви в категорії
             categoryData.categories.sort((a, b) => a.sort - b.sort).forEach(category => {
                 const categoryElement = document.createElement('div');
                 categoryElement.classList.add('category');
