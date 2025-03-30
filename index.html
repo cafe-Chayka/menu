@@ -32,6 +32,7 @@
             display: flex;
             overflow-x: auto;
             margin-bottom: 20px;
+            padding-top: 20px;
         }
 
         .category {
@@ -50,6 +51,18 @@
             font-weight: bold;
             text-align: center;
             margin-bottom: 10px;
+        }
+
+        /* Фіксація заголовка "Кухня" та "Бар" */
+        .category-name-sticky {
+            position: sticky;
+            top: 0;
+            background-color: #fff;
+            z-index: 10;
+            padding-top: 10px;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-align: center;
         }
 
         .dish {
@@ -71,6 +84,12 @@
         .dish-description {
             font-size: 0.9em;
             color: #555;
+        }
+
+        .dish-output {
+            font-size: 1em;
+            color: #333;
+            font-weight: normal;
         }
 
         .menu-background {
@@ -111,12 +130,16 @@
             const categoryRow = document.createElement('div');
             categoryRow.classList.add('category-row');
 
+            // Фіксований заголовок
             const categoryTitle = document.createElement('div');
-            categoryTitle.classList.add('category-name');
+            categoryTitle.classList.add('category-name-sticky');
             categoryTitle.textContent = categoryName;
 
             // Додати заголовок категорії в ряд
             categoryRow.appendChild(categoryTitle);
+
+            // Сортуємо категорії по полю "sort"
+            categoryData.categories.sort((a, b) => a.sort - b.sort);
 
             categoryData.categories.forEach(category => {
                 const categoryElement = document.createElement('div');
@@ -141,6 +164,15 @@
                         dishElement.appendChild(dishDescription);
                     }
 
+                    // Вивести спочатку виведення
+                    if (dish.output && dish.nameoutput) {
+                        const dishOutput = document.createElement('div');
+                        dishOutput.classList.add('dish-output');
+                        dishOutput.textContent = `${dish.nameoutput}: ${dish.output}`;
+                        dishElement.appendChild(dishOutput);
+                    }
+
+                    // Вивести ціну
                     const dishPrice = document.createElement('div');
                     dishPrice.classList.add('dish-price');
                     dishPrice.textContent = dish.price;
