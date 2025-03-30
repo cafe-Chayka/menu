@@ -14,31 +14,38 @@
             background-color: #f8f8f8;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             height: 100vh;
             overflow: auto;
         }
 
         .menu-container {
-            width: 1200px;
-            height: 850px;
+            width: 100%;
+            height: 100%;
             background-color: white;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
             padding: 20px;
             display: flex;
-            flex-wrap: wrap;
-            overflow: auto;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .categories-container {
+            display: flex;
+            overflow-x: scroll;
+            padding-bottom: 20px;
         }
 
         .category {
-            flex: 1 1 calc(16% - 20px);
-            max-height: 350px;
-            overflow: hidden;
+            flex: 0 0 auto;
+            width: 300px;
+            margin-right: 20px;
             padding: 10px;
-            margin: 10px;
             border: 1px solid #ddd;
             display: inline-block;
-            vertical-align: top;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
         }
 
         .category h3 {
@@ -57,52 +64,81 @@
         .dish-name {
             font-weight: bold;
         }
+
+        .category-container {
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+
     </style>
 </head>
 <body>
-    <div class="menu-container" id="menu"></div>
+    <div class="menu-container" id="menu">
+        <div class="categories-container" id="menu-content"></div>
+    </div>
 
     <script>
         fetch('menu.json')
             .then(response => response.json())
             .then(menuData => {
-                const menuContainer = document.getElementById('menu');
-                const categories = [...menuData.kitchen.categories, ...menuData.bar.categories];
+                const menuContent = document.getElementById('menu-content');
 
-                categories.forEach(category => {
-                    let categoryDiv = document.createElement('div');
+                // Обробка кухні
+                menuData.kitchen.categories.forEach(category => {
+                    const categoryDiv = document.createElement('div');
                     categoryDiv.classList.add('category');
 
-                    let title = document.createElement('h3');
-                    title.textContent = category.name;
-                    categoryDiv.appendChild(title);
+                    const categoryTitle = document.createElement('h3');
+                    categoryTitle.textContent = category.name;
+                    categoryDiv.appendChild(categoryTitle);
 
-                    category.dishes.forEach((dish, index) => {
-                        let dishDiv = document.createElement('div');
+                    category.dishes.forEach(dish => {
+                        const dishDiv = document.createElement('div');
                         dishDiv.classList.add('dish');
 
-                        let dishName = document.createElement('span');
+                        const dishName = document.createElement('span');
                         dishName.classList.add('dish-name');
                         dishName.textContent = dish.name;
 
-                        let dishPrice = document.createElement('span');
+                        const dishPrice = document.createElement('span');
                         dishPrice.textContent = dish.price;
 
                         dishDiv.appendChild(dishName);
                         dishDiv.appendChild(dishPrice);
                         categoryDiv.appendChild(dishDiv);
-
-                        if (categoryDiv.scrollHeight > 350) {
-                            menuContainer.appendChild(categoryDiv);
-                            categoryDiv = document.createElement('div');
-                            categoryDiv.classList.add('category');
-                            title = document.createElement('h3');
-                            title.textContent = category.name + " (продовження)";
-                            categoryDiv.appendChild(title);
-                        }
                     });
 
-                    menuContainer.appendChild(categoryDiv);
+                    menuContent.appendChild(categoryDiv);
+                });
+
+                // Обробка бару
+                menuData.bar.categories.forEach(category => {
+                    const categoryDiv = document.createElement('div');
+                    categoryDiv.classList.add('category');
+
+                    const categoryTitle = document.createElement('h3');
+                    categoryTitle.textContent = category.name;
+                    categoryDiv.appendChild(categoryTitle);
+
+                    category.dishes.forEach(dish => {
+                        const dishDiv = document.createElement('div');
+                        dishDiv.classList.add('dish');
+
+                        const dishName = document.createElement('span');
+                        dishName.classList.add('dish-name');
+                        dishName.textContent = dish.name;
+
+                        const dishPrice = document.createElement('span');
+                        dishPrice.textContent = dish.price;
+
+                        dishDiv.appendChild(dishName);
+                        dishDiv.appendChild(dishPrice);
+                        categoryDiv.appendChild(dishDiv);
+                    });
+
+                    menuContent.appendChild(categoryDiv);
                 });
             })
             .catch(error => console.error('Помилка завантаження меню:', error));
