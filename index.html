@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Меню кафе "Чайка"</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Pirata+One&family=Lobster&family=Cinzel:wght@400;700&family=Old+Standard+TT:wght@400;700&display=swap">
     <style>
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Old Standard TT', serif;
             margin: 0;
             padding: 0;
             background-color: #f0f0f0;
@@ -21,48 +22,52 @@
             width: 100vw;
             height: 100vh;
             background-color: #fff;
-            overflow: auto;
+            overflow-x: auto;
+            overflow-y: auto;
+            white-space: nowrap;
+            position: relative;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
             align-items: flex-start;
+        }
+
+        .menu-header {
+            position: sticky;
+            top: 0;
+            background: white;
+            width: 100%;
+            text-align: center;
+            font-family: 'Cinzel', serif;
+            font-size: 2em;
+            font-weight: bold;
+            padding: 10px 0;
+            text-transform: uppercase;
+            z-index: 10;
         }
 
         .category-row {
             display: flex;
             overflow-x: auto;
             margin-bottom: 20px;
-            padding-top: 20px;
+            padding-left: 20px;
         }
 
         .category {
             width: 300px;
-            height: 500px;
             background-color: rgba(255, 255, 255, 0.9);
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             margin-right: 20px;
             padding: 15px;
             overflow: hidden;
+            white-space: normal;
         }
 
         .category-name {
-            font-size: 1.5em;
-            font-weight: bold;
+            font-family: 'Lobster', cursive;
+            font-size: 1.8em;
             text-align: center;
             margin-bottom: 10px;
-        }
-
-        /* Фіксація заголовка "Кухня" та "Бар" */
-        .category-name-sticky {
-            position: sticky;
-            top: 0;
-            background-color: #fff;
-            z-index: 10;
-            padding-top: 10px;
-            font-size: 1.5em;
-            font-weight: bold;
-            text-align: center;
         }
 
         .dish {
@@ -72,86 +77,62 @@
         }
 
         .dish-name {
-            font-weight: bold;
-            font-size: 1.2em;
+            font-family: 'Pirata One', cursive;
+            font-size: 1.5em;
+        }
+
+        .dish-output {
+            font-size: 1.1em;
+            color: #444;
         }
 
         .dish-price {
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: 1.5em;
             color: #8B0000;
-            font-weight: bold;
         }
 
         .dish-description {
             font-size: 0.9em;
             color: #555;
         }
-
-        .dish-output {
-            font-size: 1em;
-            color: #333;
-            font-weight: normal;
-        }
-
-        .menu-background {
-            background-image: url('https://via.placeholder.com/1200x800/ddd/fff?text=Menu+Background'); /* Фото фон */
-            background-size: cover;
-            background-position: center;
-        }
     </style>
 </head>
 <body>
 
     <div class="menu-container" id="menuContainer">
-        <!-- Меню завантажується сюди -->
+        <div class="menu-header">Кухня</div>
+        <div class="category-row" id="kitchenRow"></div>
+        <div class="menu-header">Бар</div>
+        <div class="category-row" id="barRow"></div>
     </div>
 
     <script>
-        // Функція для завантаження меню з JSON
         function loadMenu() {
             fetch('menu.json')
                 .then(response => response.json())
                 .then(menuData => {
-                    const menuContainer = document.getElementById('menuContainer');
-                    menuContainer.innerHTML = '';  // Очистити контейнер перед додаванням нових елементів
-
-                    // Завантажити кухню
-                    loadCategory(menuData.kitchen, 'Кухня', menuContainer);
-
-                    // Завантажити бар
-                    loadCategory(menuData.bar, 'Бар', menuContainer);
+                    loadCategory(menuData.kitchen, document.getElementById('kitchenRow'));
+                    loadCategory(menuData.bar, document.getElementById('barRow'));
                 })
-                .catch(error => {
-                    console.error('Помилка завантаження меню:', error);
-                });
+                .catch(error => console.error('Помилка завантаження меню:', error));
         }
 
-        // Функція для завантаження категорії
-        function loadCategory(categoryData, categoryName, menuContainer) {
-            const categoryRow = document.createElement('div');
-            categoryRow.classList.add('category-row');
-
-            // Фіксований заголовок
-            const categoryTitle = document.createElement('div');
-            categoryTitle.classList.add('category-name-sticky');
-            categoryTitle.textContent = categoryName;
-
-            // Додати заголовок категорії в ряд
-            categoryRow.appendChild(categoryTitle);
-
-            // Сортуємо категорії по полю "sort"
-            categoryData.categories.sort((a, b) => a.sort - b.sort);
-
-            categoryData.categories.forEach(category => {
+        function loadCategory(categoryData, categoryRow) {
+            categoryRow.innerHTML = '';
+            categoryData.categories.sort((a, b) => a.sort - b.sort).forEach(category => {
                 const categoryElement = document.createElement('div');
                 categoryElement.classList.add('category');
 
-                const categoryHeader = document.createElement('h3');
+                const categoryHeader = document.createElement('div');
+                categoryHeader.classList.add('category-name');
                 categoryHeader.textContent = category.name;
                 categoryElement.appendChild(categoryHeader);
 
                 category.dishes.forEach(dish => {
                     const dishElement = document.createElement('div');
                     dishElement.classList.add('dish');
+
                     const dishName = document.createElement('div');
                     dishName.classList.add('dish-name');
                     dishName.textContent = dish.name;
@@ -164,15 +145,11 @@
                         dishElement.appendChild(dishDescription);
                     }
 
-                    // Вивести спочатку виведення
-                    if (dish.output && dish.nameoutput) {
-                        const dishOutput = document.createElement('div');
-                        dishOutput.classList.add('dish-output');
-                        dishOutput.textContent = `${dish.nameoutput}: ${dish.output}`;
-                        dishElement.appendChild(dishOutput);
-                    }
+                    const dishOutput = document.createElement('div');
+                    dishOutput.classList.add('dish-output');
+                    dishOutput.textContent = dish.nameoutput + ': ' + dish.output;
+                    dishElement.appendChild(dishOutput);
 
-                    // Вивести ціну
                     const dishPrice = document.createElement('div');
                     dishPrice.classList.add('dish-price');
                     dishPrice.textContent = dish.price;
@@ -183,11 +160,8 @@
 
                 categoryRow.appendChild(categoryElement);
             });
-
-            menuContainer.appendChild(categoryRow);
         }
 
-        // Завантажити меню при завантаженні сторінки
         window.onload = loadMenu;
     </script>
 
