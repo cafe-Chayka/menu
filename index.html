@@ -9,58 +9,33 @@
         body {
             font-family: 'Old Standard TT', serif;
             margin: 0;
-            padding: 0;
+            padding: 20px;
             background-color: #f0f0f0;
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
         }
 
         .menu-container {
-            width: 100vw;
-            height: 100vh;
+            width: 90vw;
             background-color: #fff;
-            overflow-x: auto;
-            overflow-y: auto;
-            white-space: nowrap;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
+            padding: 20px;
+            column-width: 350px;
+            column-gap: 40px;
         }
 
         .menu-header {
-            position: sticky;
-            top: 0;
-            background: white;
-            width: 100%;
-            text-align: center;
             font-family: 'Cinzel', serif;
             font-size: 2em;
             font-weight: bold;
-            padding: 10px 0;
             text-transform: uppercase;
-            z-index: 10;
-        }
-
-        .category-row {
-            display: flex;
-            overflow-x: auto;
-            margin-bottom: 20px;
-            padding-left: 20px;
+            break-before: column;
         }
 
         .category {
-            width: 300px;
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-right: 20px;
-            padding: 15px;
-            overflow: hidden;
-            white-space: normal;
+            display: inline-block;
+            width: 100%;
+            break-inside: avoid;
+            margin-bottom: 20px;
         }
 
         .category-name {
@@ -102,9 +77,9 @@
 
     <div class="menu-container" id="menuContainer">
         <div class="menu-header">Кухня</div>
-        <div class="category-row" id="kitchenRow"></div>
+        <div id="kitchen"></div>
         <div class="menu-header">Бар</div>
-        <div class="category-row" id="barRow"></div>
+        <div id="bar"></div>
     </div>
 
     <script>
@@ -112,14 +87,13 @@
             fetch('menu.json')
                 .then(response => response.json())
                 .then(menuData => {
-                    loadCategory(menuData.kitchen, document.getElementById('kitchenRow'));
-                    loadCategory(menuData.bar, document.getElementById('barRow'));
+                    loadCategory(menuData.kitchen, document.getElementById('kitchen'));
+                    loadCategory(menuData.bar, document.getElementById('bar'));
                 })
                 .catch(error => console.error('Помилка завантаження меню:', error));
         }
 
-        function loadCategory(categoryData, categoryRow) {
-            categoryRow.innerHTML = '';
+        function loadCategory(categoryData, container) {
             categoryData.categories.sort((a, b) => a.sort - b.sort).forEach(category => {
                 const categoryElement = document.createElement('div');
                 categoryElement.classList.add('category');
@@ -158,7 +132,7 @@
                     categoryElement.appendChild(dishElement);
                 });
 
-                categoryRow.appendChild(categoryElement);
+                container.appendChild(categoryElement);
             });
         }
 
