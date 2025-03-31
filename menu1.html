@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Меню кафе "Чайка"</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Pirata+One&family=Lobster&family=Cinzel:wght@400;700&family=Old+Standard+TT:wght@400;700&display=swap">
+    <style>
+        body {
+            font-family: 'Old Standard TT', serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .menu-container {
+            width: 90vw;
+            background-color: #fff;
+            padding: 20px;
+            column-width: 350px;
+            column-gap: 40px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .menu-header {
+            font-family: 'Cinzel', serif;
+            font-size: 2em;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 20px;
+        }
+
+        .category {
+            display: inline-block;
+            width: 100%;
+            break-inside: avoid;
+            margin-bottom: 20px;
+        }
+
+        .category-name {
+            font-family: 'Lobster', cursive;
+            font-size: 1.8em;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .dish {
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .dish-name {
+            font-family: 'Pirata One', cursive;
+            font-size: 1.5em;
+        }
+
+        .dish-output {
+            font-size: 1.1em;
+            color: #444;
+        }
+
+        .dish-price {
+            font-family: 'UnifrakturMaguntia', cursive;
+            font-size: 1.5em;
+            color: #8B0000;
+        }
+
+        .dish-description {
+            font-size: 0.9em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="menu-container" id="menuContainer">
+        <!-- Заголовки будуть тут -->
+        <div id="kitchen" class="menu-category"></div>
+        <div id="bar" class="menu-category"></div>
+    </div>
+
+    <script>
+        function loadMenu() {
+            fetch('menu.json')
+                .then(response => response.json())
+                .then(menuData => {
+                    loadCategory(menuData.kitchen, document.getElementById('kitchen'), 'Кухня');
+                    loadCategory(menuData.bar, document.getElementById('bar'), 'Бар');
+                })
+                .catch(error => console.error('Помилка завантаження меню:', error));
+        }
+
+        function loadCategory(categoryData, container, headerText) {
+            // Створюємо заголовок для категорії
+            const categoryHeader = document.createElement('div');
+            categoryHeader.classList.add('menu-header');
+            categoryHeader.textContent = headerText;
+            container.appendChild(categoryHeader);
+
+            // Завантажуємо страви в категорії
+            categoryData.categories.sort((a, b) => a.sort - b.sort).forEach(category => {
+                const categoryElement = document.createElement('div');
+                categoryElement.classList.add('category');
+
+                const categoryHeader = document.createElement('div');
+                categoryHeader.classList.add('category-name');
+                categoryHeader.textContent = category.name;
+                categoryElement.appendChild(categoryHeader);
+
+                category.dishes.forEach(dish => {
+                    const dishElement = document.createElement('div');
+                    dishElement.classList.add('dish');
+
+                    const dishName = document.createElement('div');
+                    dishName.classList.add('dish-name');
+                    dishName.textContent = dish.name;
+                    dishElement.appendChild(dishName);
+
+                    if (dish.description) {
+                        const dishDescription = document.createElement('div');
+                        dishDescription.classList.add('dish-description');
+                        dishDescription.textContent = dish.description;
+                        dishElement.appendChild(dishDescription);
+                    }
+
+                    const dishOutput = document.createElement('div');
+                    dishOutput.classList.add('dish-output');
+                    dishOutput.textContent = dish.nameoutput + ': ' + dish.output;
+                    dishElement.appendChild(dishOutput);
+
+                    const dishPrice = document.createElement('div');
+                    dishPrice.classList.add('dish-price');
+                    dishPrice.textContent = dish.price;
+                    dishElement.appendChild(dishPrice);
+
+                    categoryElement.appendChild(dishElement);
+                });
+
+                container.appendChild(categoryElement);
+            });
+        }
+
+        window.onload = loadMenu;
+    </script>
+
+</body>
+</html>
