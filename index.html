@@ -15,6 +15,7 @@
             color: #fff;
             text-align: center;
             padding-top: 60px;
+            overflow-x: hidden;
         }
 
         .fixed-header {
@@ -64,6 +65,7 @@
         .tab-content {
             display: none;
             padding: 20px;
+            margin-top: 80px; /* Збільшений відступ після кнопок */
         }
 
         .tab-content.active {
@@ -73,7 +75,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 20px; /* Відступ між таблицею та кнопками */
         }
 
         th, td {
@@ -106,14 +108,25 @@
             font-weight: 700; /* жирний шрифт */
             font-size: 1.2em; /* збільшений розмір шрифту для кращої видимості */
         }
+
+        .tab-button img {
+            vertical-align: middle;
+            margin-right: 8px;
+        }
     </style>
 </head>
 <body>
     <div class="fixed-header">Ласкаво просимо до кафе "Чайка"</div>
 
     <div class="tabs">
-        <button class="tab-button active" onclick="showTab('kitchen', this)">Кухня</button>
-        <button class="tab-button" onclick="showTab('bar', this)">Бар</button>
+        <button class="tab-button active" onclick="showTab('kitchen', this)">
+            <img src="https://img.icons8.com/ios/50/ffffff/restaurant.png" alt="Kitchen Icon" />
+            Кухня
+        </button>
+        <button class="tab-button" onclick="showTab('bar', this)">
+            <img src="https://img.icons8.com/ios/50/ffffff/coffee.png" alt="Bar Icon" />
+            Бар
+        </button>
     </div>
 
     <div id="kitchen" class="tab-content active">
@@ -139,10 +152,12 @@
             fetch('menu.json')
                 .then(response => response.json())
                 .then(menuData => {
+                    const categories = [...menuData[tabName].categories].sort((a, b) => a.sort - b.sort);
+
                     if (tabName === 'kitchen') {
-                        loadCategories('kitchen-categories', menuData.kitchen.categories);
+                        loadCategories('kitchen-categories', categories);
                     } else if (tabName === 'bar') {
-                        loadCategories('bar-categories', menuData.bar.categories);
+                        loadCategories('bar-categories', categories);
                     }
                 })
                 .catch(error => console.error('Помилка завантаження меню:', error));
